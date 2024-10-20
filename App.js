@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, FlatList, Text, StyleSheet } from 'react-native';
+import { View, FlatList, StyleSheet } from 'react-native';
+import { TextInput, Button, List, Appbar } from 'react-native-paper';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'; // Import SafeAreaProvider
 
 export default function App() {
   const [item, setItem] = useState('');
@@ -17,23 +19,43 @@ export default function App() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Add an item"
-          value={item}
-          onChangeText={setItem}
-        />
-        <Button title="Add" onPress={addItem} />
-        <Button title="Clear" onPress={clearList} />
-      </View>
-      <FlatList
-        data={shoppingList}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <Text style={styles.listItem}>{item.value}</Text>}
-      />
-    </View>
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={styles.container}>
+          <Appbar.Header>
+            <Appbar.Content title="Shopping List" />
+          </Appbar.Header>
+
+          <View style={styles.inputContainer}>
+            <TextInput
+              mode="outlined"
+              label="Add an item"
+              value={item}
+              onChangeText={setItem}
+              style={styles.input}
+            />
+            <Button mode="contained" onPress={addItem} style={styles.button}>
+              Add
+            </Button>
+            <Button mode="outlined" onPress={clearList} style={styles.button}>
+              Clear
+            </Button>
+          </View>
+
+          <FlatList
+            data={shoppingList}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <List.Item
+                title={item.value}
+                left={() => <List.Icon icon="cart-outline" />}
+                style={styles.listItem}
+              />
+            )}
+          />
+        </View>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
@@ -41,27 +63,26 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
+    backgroundColor: '#f6f6f6',
+    justifyContent: 'flex-start',
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center', 
-    marginBottom: 10,
-    marginTop: 50, 
+    justifyContent: 'space-between',
+    marginBottom: 20,
   },
   input: {
     flex: 1,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    padding: 10,
     marginRight: 10,
-    maxWidth: '60%', 
+  },
+  button: {
+    marginLeft: 5,
   },
   listItem: {
-    padding: 10,
-    borderBottomColor: '#ccc',
-    borderBottomWidth: 1,
+    backgroundColor: '#fff',
+    marginVertical: 5,
+    borderRadius: 5,
+    elevation: 2,
   },
 });
